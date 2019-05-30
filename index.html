@@ -17,12 +17,30 @@
 		opacity{
 			opacity: 0;
 		}
+		#servermsg {
+			position: relative;
+			top: 15%;
+			margin-left: auto;
+			margin-right: auto;
+			color: #ff0000;
+			font-weight: 600;
+			font-size: 28px;
+			z-index: 500;
+		}
+		#servermsgparent {
+			width: 100%;
+			align-content: center;
+			text-align: center;
+		}
 		</style>
 	</head>
 	
 	<body>
+		<div id="servermsgparent">
+			<p id="servermsg"></p>
+		</div>
 		<div id="menu" style="top:50%;position:absolute;width:20%;min-width:300px;height:50%;min-height:400px;left:50%;transform: translate(-50%, -50%);background-color:#2F4F4F;opacity:0.8;border:0px solid;border-radius:5px">
-			<div><center><h1>GoGame</h1></center></div>
+			<div><center><h1>BoxGame</h1></center></div>
 			<div style="width:100%;display:block">
 			<center>
 			<form onsubmit="doIt();" action="#" method="GET">
@@ -47,11 +65,11 @@
 		
 		
 		<canvas id="gameCanvas"></canvas>
-		<script src="https://gocode.it/TIWD/OldGame/js/jquery.min.js"></script>
-		<script src="https://gocode.it/TIWD/OldGame/js/requestAnimationFrame.js"></script>
-		<script src="https://gocode.it/TIWD/OldGame/js/md5.js"></script>
-		<script src="https://gocode.it/TIWD/OldGame/js/game.js"></script>
-		<script src="https://gocode.it/TIWD/OldGame/js/lz-string.js"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/requestAnimationFrame.js"></script>
+		<script src="js/md5.js"></script>
+		<script src="js/game.js"></script>
+		<script src="js/lz-string.js"></script>
 		<script>
 			var username,password;
 			function doIt(){

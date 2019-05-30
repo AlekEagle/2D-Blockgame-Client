@@ -1,7 +1,7 @@
 /**************************************************
 ** GAME VARIABLES
 **************************************************/
-var canvas, ctx, socket, drawCache = [], connection, xoff = 0, yoff = 0, isChatFaded = true, typing = false, clearNext = false, debug = false, reseting = false, connected = false;
+var canvas, ctx, socket, drawCache = [], connection, xoff = 0, yoff = 0, isChatFaded = true, typing = false, clearNext = false, debug = false, reseting = false, connected = false, timeoutThing = null;
 
 
 /**************************************************
@@ -62,6 +62,11 @@ function toggleChatInput(){
 	
 	if(typing){
 		$("#msgBox").focus();
+	}else {
+		var tmp = document.createElement("input");
+		document.body.appendChild(tmp);
+		tmp.focus();
+		document.body.removeChild(tmp);
 	}
 }
 
@@ -70,7 +75,7 @@ function connectToServer(){
 	ctx = canvas.getContext("2d");
 	drawCache = [];
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	var connectTo = "wss://gsv.gocode.it:5453";
+	var connectTo = "wss://" + window.location.hostname + ":8443";
 	connection = new WebSocket(connectTo);
 	
     connection.onopen = function () {
@@ -89,6 +94,13 @@ function connectToServer(){
 		$("#chatbox").text("");
 	}
     connection.onerror = function (error) {
+		document.getElementById('servermsg').innerText = connected ? "You were disconnected for an unknown reason!" : "Unable to connect!";
+		if (timeoutThing !== null) clearTimeout(timeoutThing);
+		timeoutThing = null;
+		timeoutThing = setTimeout(() => {
+			document.getElementById('servermsg').innerText = '';
+		}, 10000);
+		connected = false;
         console.log("ERR : ");
 		console.log(error);
     };
@@ -153,10 +165,18 @@ function connectToServer(){
 				break;
 			case 4://HeartBeat
 				connection.send("7|");
-				break;
+			break;
+			case 5:
+				document.getElementById('servermsg').innerText = data.slice(1).join(' ');
+				if (timeoutThing !== null) clearTimeout(timeoutThing);
+				timeoutThing = null;
+				timeoutThing = setTimeout(() => {
+					document.getElementById('servermsg').innerText = '';
+				}, 10000);
+			break;
 			default :
 				console.log("Invalid packet recieved! "+type);
-				break;
+			break;
 		}
     };
 }
@@ -214,7 +234,7 @@ function onMouseScroll(e){
 function onKeydown(e) {
 	if(connected&&(!typing||(typing&&(e.keyCode>=37&&e.keyCode<=40)))){
 		connection.send("1|"+e.keyCode);
-		if(e.keyCode==13){
+		if(e.keyCode===13||e.keyCode===191){
 			toggleChatBox();
 		}
 		if(e.keyCode>100){
